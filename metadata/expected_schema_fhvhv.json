@@ -1,0 +1,30 @@
+{
+  "service_type": "fhvhv",
+  "source": "NYC TLC Trip Record Data",
+  "columns": [
+    {"name": "hvfhs_license_num", "type": "string", "description": "High Volume FHS license number"},
+    {"name": "dispatching_base_num", "type": "string", "description": "Dispatching base number"},
+    {"name": "originating_base_num", "type": "string", "description": "Originating base number"},
+    {"name": "request_datetime", "type": "timestamp", "description": "Date and time of request"},
+    {"name": "on_scene_datetime", "type": "timestamp", "description": "Date and time when driver arrived"},
+    {"name": "pickup_datetime", "type": "timestamp", "description": "Date and time of pickup"},
+    {"name": "dropoff_datetime", "type": "timestamp", "description": "Date and time of dropoff"},
+    {"name": "PULocationID", "type": "integer", "description": "Taxi zone pickup location ID"},
+    {"name": "DOLocationID", "type": "integer", "description": "Taxi zone dropoff location ID"},
+    {"name": "trip_distance", "type": "double", "description": "Trip distance in miles"},
+    {"name": "trip_time", "type": "integer", "description": "Trip time in seconds"},
+    {"name": "base_passenger_fare", "type": "double", "description": "Base passenger fare"},
+    {"name": "tolls", "type": "double", "description": "Tolls amount"},
+    {"name": "tips", "type": "double", "description": "Tips amount"},
+    {"name": "bcf", "type": "double", "description": "Black car fund"},
+    {"name": "sales_tax", "type": "double", "description": "Sales tax"},
+    {"name": "congestion_surcharge", "type": "double", "description": "Congestion surcharge"},
+    {"name": "airport_fee", "type": "double", "description": "Airport fee"},
+    {"name": "total_amount", "type": "double", "description": "Total amount"},
+    {"name": "shared_request_flag", "type": "string", "description": "Shared request flag"},
+    {"name": "shared_match_flag", "type": "string", "description": "Shared match flag"},
+    {"name": "access_a_ride_flag", "type": "string", "description": "Access a ride flag"},
+    {"name": "wav_request_flag", "type": "string", "description": "WAV request flag"},
+    {"name": "wav_match_flag", "type": "string", "description": "WAV match flag"}
+  ]
+}

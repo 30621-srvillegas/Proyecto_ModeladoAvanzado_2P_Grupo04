@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "description": "Business rules for quality validation in the NYC TAXI ETL pipeline",
+  "suspicious_rules": [
+    {"rule": "trip_distance <= 0", "column": "trip_distance", "severity": "suspicious", "reason": "Trip distance must be positive"},
+    {"rule": "total_amount <= 0", "column": "total_amount", "severity": "suspicious", "reason": "Total amount must be positive"},
+    {"rule": "fare_amount < 0", "column": "fare_amount", "severity": "suspicious", "reason": "Fare amount cannot be negative"},
+    {"rule": "trip_duration_minutes <= 0", "column": "trip_duration_minutes", "severity": "suspicious", "reason": "Trip duration must be positive"},
+    {"rule": "trip_duration_minutes > 480", "column": "trip_duration_minutes", "severity": "suspicious", "reason": "Trip duration exceeds 8 hours"},
+    {"rule": "average_speed_mph > 100", "column": "average_speed_mph", "severity": "suspicious", "reason": "Average speed exceeds 100 mph"},
+    {"rule": "tip_percentage > 100", "column": "tip_percentage", "severity": "suspicious", "reason": "Tip exceeds 100% of fare"},
+    {"rule": "pickup_datetime > dropoff_datetime", "column": "pickup_datetime", "severity": "suspicious", "reason": "Pickup time after dropoff time"},
+    {"rule": "pickup_datetime in future", "column": "pickup_datetime", "severity": "suspicious", "reason": "Pickup datetime is in the future"}
+  ],
+  "recovery_categories": [
+    {"code": "RECUPERABLE_SCHEMA_MISMATCH", "description": "Schema differs from expected but data can be recovered", "action": "Apply homologation mapping"},
+    {"code": "RECUPERABLE_MISSING_COLUMNS", "description": "Some columns are missing", "action": "Fill with nulls"},
+    {"code": "RECUPERABLE_TYPE_CASTING", "description": "Data type casting issues", "action": "Cast with error handling"},
+    {"code": "PARTIALLY_RECOVERABLE", "description": "Partially recoverable data", "action": "Extract what is readable"},
+    {"code": "NOT_RECOVERABLE_CORRUPT_METADATA", "description": "Corrupt Parquet metadata", "action": "Quarantine"},
+    {"code": "NOT_RECOVERABLE_EMPTY_FILE", "description": "Empty file", "action": "Quarantine"},
+    {"code": "NOT_RECOVERABLE_UNSUPPORTED_FORMAT", "description": "Unsupported format", "action": "Quarantine"}
+  ],
+  "critical_columns": [
+    "pickup_datetime",
+    "dropoff_datetime",
+    "pickup_location_id",
+    "dropoff_location_id",
+    "trip_distance",
+    "total_amount"
+  ]
+}

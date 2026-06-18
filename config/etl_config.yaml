@@ -1,0 +1,189 @@
+etl_pipeline:
+  name: "NYC_Taxi_ETL"
+  spark_app_name: "NYC_Taxi_ETL"
+  process_id_generation: "md5_timestamp"
+
+data_sources:
+  tlc_nyc:
+    base_url: "https://d37ci6vzurychx.cloudfront.net/trip-data"
+    services: ["yellow", "green", "fhvhv"]
+    years: [2024, 2025, 2026]
+    months_per_year:
+      "2024": [1,2,3,4,5,6,7,8,9,10,11,12]
+      "2025": [1,2,3,4,5,6,7,8,9,10,11,12]
+      "2026": [1,2,3,4]
+    formats: ["parquet"]
+    file_pattern: "{service}_tripdata_{year}-{month:02d}.parquet"
+  bad_parquet:
+    source: "Apache Parquet Testing Repository"
+    local_path: "data/raw/bad_parquet/"
+
+paths:
+  raw: "data/raw"
+  bronze: "data/bronze"
+  silver: "data/silver"
+  gold: "data/gold"
+  quarantine: "data/quarantine"
+  audit: "data/audit"
+  metadata: "data/audit"
+  db: "data/etl_results.db"
+
+service_type_map:
+  yellow: "yellow"
+  green: "green"
+  fhvhv: "fhvhv"
+  fhv: "fhvhv"
+
+canonical_schema:
+  description: "Unified canonical schema for NYC TLC trip records"
+  columns:
+    - {name: "trip_id", type: "string"}
+    - {name: "service_type", type: "string"}
+    - {name: "vendor_id", type: "int"}
+    - {name: "pickup_datetime", type: "timestamp"}
+    - {name: "dropoff_datetime", type: "timestamp"}
+    - {name: "passenger_count", type: "int"}
+    - {name: "trip_distance", type: "double"}
+    - {name: "pickup_location_id", type: "int"}
+    - {name: "dropoff_location_id", type: "int"}
+    - {name: "payment_type", type: "int"}
+    - {name: "fare_amount", type: "double"}
+    - {name: "extra_amount", type: "double"}
+    - {name: "mta_tax", type: "double"}
+    - {name: "tip_amount", type: "double"}
+    - {name: "tolls_amount", type: "double"}
+    - {name: "improvement_surcharge", type: "double"}
+    - {name: "total_amount", type: "double"}
+    - {name: "congestion_surcharge", type: "double"}
+    - {name: "airport_fee", type: "double"}
+    - {name: "year", type: "int"}
+    - {name: "month", type: "int"}
+    - {name: "source_file", type: "string"}
+    - {name: "ingestion_timestamp", type: "timestamp"}
+    - {name: "quality_status", type: "string"}
+  homologation:
+    pickup_datetime:
+      yellow: "tpep_pickup_datetime"
+      green: "lpep_pickup_datetime"
+      fhvhv: "pickup_datetime"
+    dropoff_datetime:
+      yellow: "tpep_dropoff_datetime"
+      green: "lpep_dropoff_datetime"
+      fhvhv: "dropoff_datetime"
+    pickup_location_id:
+      yellow: "PULocationID"
+      green: "PULocationID"
+      fhvhv: "PULocationID"
+    dropoff_location_id:
+      yellow: "DOLocationID"
+      green: "DOLocationID"
+      fhvhv: "DOLocationID"
+    vendor_id:
+      yellow: "VendorID"
+      green: "VendorID"
+      fhvhv: "VendorID"
+    passenger_count:
+      yellow: "passenger_count"
+      green: "passenger_count"
+      fhvhv: "passenger_count"
+    trip_distance:
+      yellow: "trip_distance"
+      green: "trip_distance"
+      fhvhv: "trip_distance"
+    rate_code_id:
+      yellow: "RatecodeID"
+      green: "RatecodeID"
+      fhvhv: "RatecodeID"
+    payment_type:
+      yellow: "payment_type"
+      green: "payment_type"
+      fhvhv: "payment_type"
+    fare_amount:
+      yellow: "fare_amount"
+      green: "fare_amount"
+      fhvhv: "base_passenger_fare"
+    extra_amount:
+      yellow: "extra"
+      green: "extra"
+      fhvhv: null
+    mta_tax:
+      yellow: "mta_tax"
+      green: "mta_tax"
+      fhvhv: null
+    tip_amount:
+      yellow: "tip_amount"
+      green: "tip_amount"
+      fhvhv: "tips"
+    tolls_amount:
+      yellow: "tolls_amount"
+      green: "tolls_amount"
+      fhvhv: "tolls"
+    improvement_surcharge:
+      yellow: "improvement_surcharge"
+      green: "improvement_surcharge"
+      fhvhv: null
+    total_amount:
+      yellow: "total_amount"
+      green: "total_amount"
+      fhvhv: "total_amount"
+    congestion_surcharge:
+      yellow: "congestion_surcharge"
+      green: "congestion_surcharge"
+      fhvhv: "congestion_surcharge"
+    airport_fee:
+      yellow: "airport_fee"
+      green: "airport_fee"
+      fhvhv: "airport_fee"
+    store_and_fwd_flag:
+      yellow: "store_and_fwd_flag"
+      green: "store_and_fwd_flag"
+      fhvhv: null
+
+quality:
+  critical_columns:
+    - "pickup_datetime"
+    - "dropoff_datetime"
+    - "pickup_location_id"
+    - "dropoff_location_id"
+    - "trip_distance"
+    - "total_amount"
+  suspicious_rules:
+    - {name: "trip_distance <= 0", column: "trip_distance"}
+    - {name: "total_amount <= 0", column: "total_amount"}
+    - {name: "fare_amount < 0", column: "fare_amount"}
+    - {name: "trip_duration_minutes <= 0", column: "trip_duration_minutes"}
+    - {name: "trip_duration_minutes > 480", column: "trip_duration_minutes"}
+    - {name: "average_speed_mph > 100", column: "average_speed_mph"}
+    - {name: "tip_percentage > 100", column: "tip_percentage"}
+    - {name: "pickup_datetime > dropoff_datetime", column: "pickup_datetime"}
+    - {name: "pickup_datetime in future", column: "pickup_datetime"}
+
+recovery_categories:
+  - "RECUPERABLE_SCHEMA_MISMATCH"
+  - "RECUPERABLE_MISSING_COLUMNS"
+  - "RECUPERABLE_TYPE_CASTING"
+  - "PARTIALLY_RECOVERABLE"
+  - "NOT_RECOVERABLE_CORRUPT_METADATA"
+  - "NOT_RECOVERABLE_EMPTY_FILE"
+  - "NOT_RECOVERABLE_UNSUPPORTED_FORMAT"
+
+database:
+  engine: "sqlite"
+  connection_string: "sqlite:///{db_path}"
+  tables:
+    - "gold_trips_clean"
+    - "gold_daily_revenue"
+    - "gold_location_performance"
+    - "quality_rejected_records"
+    - "quality_metrics_summary"
+    - "audit_file_inventory"
+
+spark:
+  config:
+    spark.sql.adaptive.enabled: "true"
+    spark.sql.adaptive.coalescePartitions.enabled: "true"
+    spark.sql.parquet.enableVectorizedReader: "true"
+    spark.sql.sources.partitionOverwriteMode: "dynamic"
+    spark.sql.session.timeZone: "UTC"
+    spark.sql.shuffle.partitions: "8"
+  master: "local[*]"

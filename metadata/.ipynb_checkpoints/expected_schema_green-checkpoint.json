@@ -1,0 +1,27 @@
+{
+  "service_type": "green",
+  "source": "NYC TLC Trip Record Data",
+  "columns": [
+    {"name": "VendorID", "type": "integer", "description": "TPEP provider code"},
+    {"name": "lpep_pickup_datetime", "type": "timestamp", "description": "Date and time when meter was engaged"},
+    {"name": "lpep_dropoff_datetime", "type": "timestamp", "description": "Date and time when meter was disengaged"},
+    {"name": "passenger_count", "type": "integer", "description": "Number of passengers"},
+    {"name": "trip_distance", "type": "double", "description": "Trip distance in miles"},
+    {"name": "RatecodeID", "type": "integer", "description": "Rate code identifier"},
+    {"name": "store_and_fwd_flag", "type": "string", "description": "Store and forward flag"},
+    {"name": "PULocationID", "type": "integer", "description": "Taxi zone pickup location ID"},
+    {"name": "DOLocationID", "type": "integer", "description": "Taxi zone dropoff location ID"},
+    {"name": "payment_type", "type": "integer", "description": "Payment method code"},
+    {"name": "fare_amount", "type": "double", "description": "Fare amount"},
+    {"name": "extra", "type": "double", "description": "Extra charges"},
+    {"name": "mta_tax", "type": "double", "description": "MTA tax"},
+    {"name": "tip_amount", "type": "double", "description": "Tip amount"},
+    {"name": "tolls_amount", "type": "double", "description": "Tolls amount"},
+    {"name": "improvement_surcharge", "type": "double", "description": "Improvement surcharge"},
+    {"name": "total_amount", "type": "double", "description": "Total amount"},
+    {"name": "congestion_surcharge", "type": "double", "description": "Congestion surcharge"},
+    {"name": "airport_fee", "type": "double", "description": "Airport fee"},
+    {"name": "ehail_fee", "type": "double", "description": "E-hail fee"},
+    {"name": "trip_type", "type": "integer", "description": "Trip type code"}
+  ]
+}
