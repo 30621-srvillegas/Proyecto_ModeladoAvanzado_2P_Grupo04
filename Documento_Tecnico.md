@@ -2,7 +2,7 @@
 
 ## Pipeline ETL Avanzado para Datos de Viajes de NYC Taxi & Limousine Commission
 
-**Autor:** MGS. MAGI PAUL DIAZ ZUÑIGA  
+**Autor:** Leonardo Figueroa, Miguel Flores y Steven Villegas 
 **Pipeline ETL - NYC Taxi Trip Records**  
 **Fecha:** Junio 2026
 
